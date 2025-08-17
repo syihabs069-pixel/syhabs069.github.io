@@ -1,0 +1,212 @@
+<!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mie Apa? — HTML Bucin</title>
+  <meta name="description" content="Halaman bucin interaktif: klik 4 love, lihat pesan, tebak-tebakan ‘Mie apa yang lebih enak dari Gacoan?’" />
+  <link rel="stylesheet" href="style.css">
+  <style>
+    :root{
+      --bg:#0f0f13; --card:#17171f; --soft:#1f1f2a; --text:#f7f7fb; --muted:#b6b7c2; --accent:#ff4d6d; --accent-2:#ffa6b8; --ring: #ffb3c1;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 10% -10%, #1a1a26 0%, #0f0f13 60%),
+                  radial-gradient(900px 600px at 110% 110%, #1a1a26 0%, #0f0f13 60%);
+      color:var(--text);
+      display:grid; place-items:center;
+    }
+    .wrap{width:min(620px, 92vw); padding:22px}.card{
+  background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:22px; padding:28px; position:relative; overflow:hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.03);
+}
+
+h1{font-size:clamp(22px, 3.5vw, 28px); margin:0 0 6px}
+.sub{color:var(--muted); font-size:14px; margin-bottom:18px}
+
+.hearts{display:grid; grid-template-columns: repeat(4,1fr); gap:14px; margin:14px 0 6px}
+
+button.heart{
+  aspect-ratio:1/1; border:0; border-radius:18px; background:var(--soft);
+  display:grid; place-items:center; cursor:pointer; position:relative;
+  transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+button.heart[disabled]{opacity:.55; cursor:not-allowed}
+button.heart:focus-visible{outline:2px solid var(--ring); outline-offset:3px}
+button.heart:hover{transform: translateY(-2px)}
+button.heart.active{background:linear-gradient(180deg, var(--accent), var(--accent-2)); box-shadow: 0 10px 30px rgba(255,77,109,.35)}
+
+.heart svg{width:46px; height:46px; filter: drop-shadow(0 6px 14px rgba(255,77,109,.35))}
+
+.msg{
+  margin:14px 0 10px; padding:14px 16px; border-radius:16px; background:rgba(255,255,255,.04);
+  border:1px dashed rgba(255,255,255,.12); line-height:1.6
+}
+.center{display:flex; align-items:center; justify-content:center; gap:10px}
+
+.hidden{display:none}
+.fade-in{animation:fade .35s ease both}
+@keyframes fade{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+
+.cta{
+  display:flex; gap:10px; flex-wrap:wrap; margin-top:14px
+}
+.btn{
+  border:0; padding:12px 16px; border-radius:14px; cursor:pointer; font-weight:600;
+  background:var(--accent); color:white; transition:transform .18s ease, opacity .2s ease;
+  box-shadow: 0 10px 25px rgba(255,77,109,.35)
+}
+.btn:hover{transform:translateY(-2px)}
+.btn.secondary{background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.14); box-shadow:none}
+
+.footer{margin-top:18px; color:var(--muted); font-size:12px; text-align:center}
+
+/* confetti */
+.spark{position:fixed; pointer-events:none; inset:0; overflow:hidden}
+.spark i{position:absolute; width:8px; height:8px; border-radius:2px; background:var(--accent); opacity:.95; animation: pop 800ms ease-out forwards}
+@keyframes pop{
+  from{transform:translate(var(--x,0), var(--y,0)) scale(.6) rotate(0)}
+  to{transform:translate(var(--x2,0), var(--y2,0)) scale(1) rotate(360deg); opacity:0}
+}
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1 class="center">Sentuh <span aria-hidden>❤</span> LOVE‑nya!</h1>
+      <div class="sub">Aku punya pesan nih buat kamu. Klik 4 LOVE ini~</div><div class="hearts" id="hearts">
+    <!-- 4 hearts -->
+    <button class="heart" aria-label="Love 1" data-msg="Kamuu tau gaa?">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.716-4.315-9.243-7.05C1.52 12.61 1 11.3 1 9.9 1 7.19 3.239 5 5.997 5 7.8 5 9.38 5.88 10.3 7.23 11.22 5.88 12.8 5 14.603 5 17.36 5 19.6 7.19 19.6 9.9c0 1.4-.52 2.71-1.757 4.05C18.716 16.685 12 21 12 21z"/></svg>
+    </button>
+    <button class="heart" aria-label="Love 2" data-msg="Mie apa yang lebih…">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.716-4.315-9.243-7.05C1.52 12.61 1 11.3 1 9.9 1 7.19 3.239 5 5.997 5 7.8 5 9.38 5.88 10.3 7.23 11.22 5.88 12.8 5 14.603 5 17.36 5 19.6 7.19 19.6 9.9c0 1.4-.52 2.71-1.757 4.05C18.716 16.685 12 21 12 21z"/></svg>
+    </button>
+    <button class="heart" aria-label="Love 3" data-msg="…enak dari Gacoan?">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.716-4.315-9.243-7.05C1.52 12.61 1 11.3 1 9.9 1 7.19 3.239 5 5.997 5 7.8 5 9.38 5.88 10.3 7.23 11.22 5.88 12.8 5 14.603 5 17.36 5 19.6 7.19 19.6 9.9c0 1.4-.52 2.71-1.757 4.05C18.716 16.685 12 21 12 21z"/></svg>
+    </button>
+    <button class="heart" aria-label="Love 4" data-msg="Jawab yaa~">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.716-4.315-9.243-7.05C1.52 12.61 1 11.3 1 9.9 1 7.19 3.239 5 5.997 5 7.8 5 9.38 5.88 10.3 7.23 11.22 5.88 12.8 5 14.603 5 17.36 5 19.6 7.19 19.6 9.9c0 1.4-.52 2.71-1.757 4.05C18.716 16.685 12 21 12 21z"/></svg>
+    </button>
+  </div>
+
+  <div id="messages" class="msg hidden" role="status" aria-live="polite"></div>
+
+  <div id="riddle" class="msg hidden">
+    <div class="center" style="gap:8px">
+      <strong>Mie apa yang lebih enak dari Gacoan?</strong>
+      <span id="timer" aria-label="Hitung mundur">3</span>
+    </div>
+  </div>
+  <!--LOVE emoji-->
+  <span class="love" id="love">❤️</span>
+<!-- pesan tersembunyi-->
+ <div id="mdg" class="message">aku❤️ kamu</div>
+  <div id="answer" class="msg hidden">
+    <div class="fade-in">➡ <b>Mie kamu</b> — soalnya selalu bikin nagih 💖</div>
+    <div class="cta">
+      <a class="btn" id="replyBtn" href="#" rel="nofollow noopener">💌 Balas</a>
+      <button class="btn secondary" id="againBtn">Main lagi</button>
+    </div>
+  </div>
+
+  <div id="last" class="footer hidden">Yaudah kalo ga kangen mh 😜</div>
+</div>
+
+  </div>  <div class="spark" aria-hidden="true"></div>  <script>
+    const hearts = [...document.querySelectorAll('.heart')];
+    const messages = document.getElementById('messages');
+    const riddle = document.getElementById('riddle');
+    const answer = document.getElementById('answer');
+    const timerEl = document.getElementById('timer');
+    const last = document.getElementById('last');
+    const replyBtn = document.getElementById('replyBtn');
+    const againBtn = document.getElementById('againBtn');
+
+    let clicked = 0;
+
+    // Optional: set WhatsApp nomor tujuan otomatis (ganti 62xxxxxxxxxx)
+    const whatsapp = '';// contoh: '62812xxxxxxx'
+    replyBtn.href = whatsapp ? https://wa.me/${whatsapp}?text=${encodeURIComponent('Jawabanku: Mie kamu 😆💖')} : '#';
+    replyBtn.addEventListener('click', (e)=>{
+      if(!whatsapp){
+        e.preventDefault();
+        alert('Tambahkan nomor WhatsApp di variabel "whatsapp" pada script agar tombol Balas terbuka.');
+      }
+    });
+
+    function confetti(x, y){
+      const wrap = document.querySelector('.spark');
+      for(let i=0;i<24;i++){
+        const p = document.createElement('i');
+        const a = (Math.random()*360)|0;
+        const d = 80 + Math.random()*120;
+        p.style.left = x + 'px';
+        p.style.top = y + 'px';
+        p.style.transform = translate(-50%,-50%);
+        p.style.setProperty('--x2', Math.cos(a*Math.PI/180)*d + 'px');
+        p.style.setProperty('--y2', Math.sin(a*Math.PI/180)*d + 'px');
+        p.style.background = i%3? 'var(--accent)':'var(--accent-2)';
+        wrap.appendChild(p);
+        setTimeout(()=>p.remove(), 850);
+      }
+    }
+
+    hearts.forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        if(btn.classList.contains('active')) return;
+        btn.classList.add('active');
+        btn.setAttribute('disabled','');
+        clicked++;
+
+        // show piece message
+        const text = btn.dataset.msg;
+        messages.classList.remove('hidden');
+        const line = document.createElement('div');
+        line.className = 'fade-in';
+        line.textContent = text;
+        messages.appendChild(line);
+
+        const r = btn.getBoundingClientRect();
+        confetti(r.left + r.width/2, r.top + r.height/2);
+
+        if(clicked === hearts.length){
+          // start riddle countdown
+          setTimeout(()=>{
+            riddle.classList.remove('hidden');
+            let t = 3; timerEl.textContent = t;
+            const id = setInterval(()=>{
+              t--; timerEl.textContent = t;
+              if(t<=0){ clearInterval(id); showAnswer(); }
+            }, 1000);
+          }, 350);
+        }
+      });
+    });
+
+    function showAnswer(){
+      riddle.classList.add('hidden');
+      answer.classList.remove('hidden');
+      last.classList.remove('hidden');
+      answer.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+
+    againBtn.addEventListener('click', ()=>{
+      // reset state
+      clicked = 0; messages.innerHTML = '';
+      hearts.forEach(b=>{ b.classList.remove('active'); b.removeAttribute('disabled'); });
+      riddle.classList.add('hidden');
+      answer.classList.add('hidden');
+      last.classList.add('hidden');
+      window.scrollTo({top:0, behavior:'smooth'});
+       <!--hubungkan ke javaScript-->
+  <script src="script.js"></script>
+    });
+  </script></body>
+</html>
